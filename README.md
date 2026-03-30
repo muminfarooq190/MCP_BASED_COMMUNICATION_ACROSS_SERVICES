@@ -2,6 +2,7 @@
 
 ## Monorepo Layout
 - `src/gateway` API entrypoint and MCP server tool endpoints.
+- `src/mcp-server` dedicated MCP server exposing outage event tools.
 - `src/mcp-contracts` shared envelope and event contracts.
 - `src/services/outage-service`
 - `src/services/notification-service`
@@ -19,6 +20,7 @@
 2. **Run gateway + services** (open one shell per solution)
    ```bash
    dotnet run --project src/gateway/Gateway.Api.csproj
+   dotnet run --project src/mcp-server/Mcp.Server.csproj
    dotnet run --project src/services/outage-service/OutageService.Api.csproj
    dotnet run --project src/services/notification-service/NotificationService.Api.csproj
    dotnet run --project src/services/billing-service/BillingService.Api.csproj

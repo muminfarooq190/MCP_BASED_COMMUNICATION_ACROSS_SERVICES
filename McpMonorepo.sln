@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BillingService.Api", "src/s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyticsService.Api", "src/services/analytics-service/AnalyticsService.Api.csproj", "{0738B30E-2DDC-44E4-9D9C-0892C423599B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mcp.Server", "src/mcp-server/Mcp.Server.csproj", "{F5DA2E17-6116-4AB8-B37A-B4CEB3BE5D98}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{0738B30E-2DDC-44E4-9D9C-0892C423599B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0738B30E-2DDC-44E4-9D9C-0892C423599B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0738B30E-2DDC-44E4-9D9C-0892C423599B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5DA2E17-6116-4AB8-B37A-B4CEB3BE5D98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5DA2E17-6116-4AB8-B37A-B4CEB3BE5D98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5DA2E17-6116-4AB8-B37A-B4CEB3BE5D98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5DA2E17-6116-4AB8-B37A-B4CEB3BE5D98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
