@@ -1,7 +1,22 @@
+using Confluent.Kafka;
 using Mcp.Contracts;
 using Shared.Infrastructure;
+using Shared.Infrastructure.Messaging;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSingleton(_ =>
+{
+    var config = new ProducerConfig
+    {
+        BootstrapServers = KafkaHelper.DefaultBroker,
+        Acks = Acks.All
+    };
+
+    return new ProducerBuilder<string, string>(config).Build();
+});
+builder.Services.AddSingleton<KafkaProducerBase>();
+
 var app = builder.Build();
 
 var mcpTools = new[]
@@ -13,9 +28,9 @@ var mcpTools = new[]
 
 app.MapGet("/mcp/tools", () => Results.Ok(mcpTools));
 
-app.MapPost("/mcp/tools/create_outage", (OutageRequest request) =>
+app.MapPost("/mcp/tools/create_outage", async (OutageRequest request, KafkaProducerBase producer, CancellationToken cancellationToken) =>
 {
-    var envelope = new McpEnvelope<OutageRequest>
+    var envelope = new McpEnvelope<OutageCreated>
     {
         CorrelationId = Guid.NewGuid().ToString("N"),
         TraceId = ObservabilityHelper.BuildTraceId(),
@@ -24,22 +39,26 @@ app.MapPost("/mcp/tools/create_outage", (OutageRequest request) =>
         TimestampUtc = DateTime.UtcNow,
         Metadata = new Dictionary<string, string>
         {
-            ["eventType"] = "outage.requested",
-            ["severity"] = request.Severity
+            ["eventType"] = "outage.created",
+            ["severity"] = request.Severity,
+            ["retry-count"] = "0"
         },
-        Payload = request,
+        Payload = new OutageCreated(
+            request.TenantId,
+            Guid.NewGuid().ToString("N"),
+            request.Severity,
+            request.Region),
         SchemaVersion = "1.0.0"
     };
 
-    var fanOut = new[]
-    {
-        "outage-service.received",
-        "notification-service.received",
-        "billing-service.received",
-        "analytics-service.received"
-    };
+    await producer.PublishAsync("outage.events", envelope, cancellationToken);
 
-    return Results.Accepted("/events/fanout", new { Envelope = envelope, FanOutEvents = fanOut });
+    return Results.Accepted("/events/outage", new
+    {
+        Envelope = envelope,
+        PublishedTopic = "outage.events",
+        DownstreamTopics = new[] { "notification.events", "billing.events", "analytics.events" }
+    });
 });
 
 app.MapPost("/mcp/tools/calculate_bill_impact", (BillImpactInput input) =>
